@@ -13,6 +13,7 @@
 const auto aspect_ratio = 16.0 / 9.0;
 const int image_width = 400;
 const int image_height = static_cast<int>(image_width / aspect_ratio);
+// RayTracing structures...
 struct Ray{
     glm::vec3 origin;
     glm::vec3 direction;
@@ -25,6 +26,39 @@ struct Ray{
         this->direction = direction;
     }
 };
+struct HitRecord {
+    glm::vec3 position;
+    glm::vec3 normal;   
+    float t;
+    bool front_face;
+    HitRecord(){
+        this->position = glm::vec3(0);
+        this->normal = glm::vec3(0);
+        this->t = 0.0f;
+        this->front_face = false;
+    }
+    HitRecord(glm::vec3 position,glm::vec3 normal,float t){
+        this->position = position;
+        this->normal = normal;
+        this->t = t;
+        this->front_face = false;
+    }
+};
+struct HittableSphere{
+    glm::vec3 center;
+    float radius;
+    HittableSphere(){
+        this->center = glm::vec3(0);
+        this->radius = 0.0f;
+    }
+    
+    HittableSphere(glm::vec3 center,float radius){
+        this->center = center; 
+        this->radius = radius;
+    }
+};
+//has_hit_sphere = hit function of sphere class on tutorial
+// Structures Functions
 std::string vec3_str(glm::vec3 v){
     std::stringstream ss;
     ss << "(" << v.x << "," << v.y << "," << v.z << ")";
@@ -40,6 +74,11 @@ glm::vec3 at(Ray r,float t){
 }
 glm::vec3 color(float r,float g,float b){
     return glm::vec3(r,g,b);
+}
+HitRecord set_face_normal(HitRecord& record,const Ray& r,const glm::vec3 outward_normal){
+    record.front_face = glm::dot(r.direction,outward_normal) < 0.0;
+    record.normal = record.front_face ? outward_normal : -outward_normal;
+    return record;
 }
 float hit_sphere(const Ray& r,const glm::vec3 center,const float radius){
     glm::vec3 oc = r.origin - center;
@@ -72,6 +111,35 @@ glm::vec3 ray_color(Ray r){
 void setPixel(EasyBMP::Image& img,glm::vec2 pos,glm::vec3 color){
     img.SetPixel(pos.x,pos.y,EasyBMP::RGBColor(color.x,color.y,color.z));
 }
+bool has_hit_sphere(const HittableSphere& hittableObject,
+        HitRecord& rec,
+        const Ray& ray,
+        float t_min,
+        float t_max){
+    glm::vec3 center = hittableObject.center;
+    float radius = hittableObject.radius;
+    glm::vec3 oc = ray.origin - center;
+    float a  = glm::length2(ray.direction);
+    float half_b = glm::dot(oc, ray.direction);
+    float c = glm::length2(oc) - radius * radius;
+    float discriminant = half_b * half_b - a * c;
+    if(discriminant < 0)
+        return false;
+    float sqrtd = sqrt(discriminant);
+    float root = (-half_b - sqrtd) / a;
+    if(root < t_min || t_max < root){
+        root = (-half_b + sqrtd) / a;
+        if(root < t_min || t_max < root)
+            return false;
+    }
+    rec.t = root;
+    rec.position = at(ray,rec.t);
+    glm::vec3 outward_normal = (rec.position - center) / radius;    
+    //TODO:is rec being updated as expected?Check it
+    set_face_normal(rec,ray,outward_normal);
+    return true;
+}
+//bool has_hit_any(const std::vector<>)
 int main(){
   // Image
 
