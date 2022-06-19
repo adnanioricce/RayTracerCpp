@@ -44,12 +44,12 @@ glm::vec3 color(float r,float g,float b){
 float hit_sphere(const Ray& r,const glm::vec3 center,const float radius){
     glm::vec3 oc = r.origin - center;
     auto a = glm::length2(r.direction);
-    auto b = 2.0f * (glm::dot(oc,r.direction));
-    auto c = glm::dot(oc,oc) - (glm::dot(radius,radius));
-    auto discriminant = (b * b) - (4.0f * a * c);
+    auto half_b = glm::dot(oc,r.direction);
+    auto c = glm::length2(oc) - radius * radius;
+    auto discriminant = half_b * half_b - a * c;
     return (discriminant < 0.0f)
         ? -1.0f
-        : (-b - sqrt(discriminant)) / (2.0f * a);
+        : (-half_b - sqrt(discriminant)) / a;
 }
 glm::vec3 ray_color(Ray r){
     auto center = glm::vec3(image_width / 2.0f,(image_height / 2.0f) - .5f,-1.0f);
