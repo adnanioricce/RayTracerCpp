@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.2)
 project(RayTracer)
 
-set(SOURCE_FILES main.cpp)
+set(SOURCE_FILES main.cpp Ray.h HitRecord.h HittableObjects.h color.h Utils.h)
 
 add_executable(RayTracer ${SOURCE_FILES})
 target_link_libraries(RayTracer
