@@ -22,7 +22,7 @@ const auto aspect_ratio = 16.0 / 9.0;
 const int image_width = 400;
 const int image_height = static_cast<int>(image_width / aspect_ratio);
 
-const float infinity = std::numeric_limits<float>::infinity();
+
 //has_hit_sphere = hit function of sphere class on tutorial
 // Structures Functions
 
@@ -35,26 +35,26 @@ int main(){
 
   EasyBMP::RGBColor black(64,88,127);
   EasyBMP::Image img(image_width,image_height,"output.bmp",black);
+    // Camera
+    auto viewport_height = 2.0;
+    auto viewport_width = aspect_ratio * viewport_height;
+    auto focal_length = 1.0;
 
+    auto origin = glm::vec3(image_width / 2,image_height / 2,0);
+    //auto origin = glm::vec3(0,0,0);
+    auto horizontal = glm::vec3(viewport_width,0,0);
+    auto vertical = glm::vec3(0,viewport_height,0);
+    auto lower_left_corner = origin -
+                             (horizontal / 2.0f)
+                             //glm::vec3(1,0,0)
+                             - (vertical / 2.0f) - glm::vec3(0,0, focal_length);
   // World
   std::vector<HittableSphere> spheres = {
-    HittableSphere(glm::vec3(image_width / 2.0f,image_height / 2.0f,-1),0.5f),
-    //HittableSphere(glm::vec3(image_width / 2.0f,(image_height / 2.0f) - 60.5,1.0f),100)
+    HittableSphere(glm::vec3(origin.x,origin.y,-1),0.5f),
+    //HittableSphere(glm::vec3(image_width / 2.0f,(image_height / 2.0f) - .15f,1.0f),100)
   };
 
-  // Camera
-  auto viewport_height = 2.0;
-  auto viewport_width = aspect_ratio * viewport_height;
-  auto focal_length = 1.0;
 
-  auto origin = glm::vec3(image_width / 2,image_height / 2,0);
-  //auto origin = glm::vec3(0,0,0);
-  auto horizontal = glm::vec3(viewport_width,0,0);
-  auto vertical = glm::vec3(0,viewport_height,0);
-  auto lower_left_corner = origin - 
-      (horizontal / 2.0f) 
-      //glm::vec3(1,0,0)
-      - (vertical / 2.0f) - glm::vec3(0,0, focal_length);
   std::cout << "lower_left_corner: (" << lower_left_corner.x << ","
       << lower_left_corner.y << ","
       << lower_left_corner.z << ")"
@@ -74,7 +74,7 @@ int main(){
           Ray r(origin,lower_left_corner + (pos.x * horizontal) + (pos.y * vertical) - origin);
           //glm::vec3 color = ray_color(r);
           //setPixel(img,pos,color);
-          glm::vec3 pixel_color = ray_color(r,spheres);
+          glm::vec3 pixel_color = ray_color(r,origin,spheres);
           logCsv << "r Pos = " + vec2_str(pos) + ", Origin = " << vec3_str(r.origin) 
               << ", Direction = " << vec3_str(r.direction)
               << ", Color = " << vec3_str(pixel_color)

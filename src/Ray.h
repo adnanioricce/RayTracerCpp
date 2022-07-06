@@ -10,7 +10,6 @@
 #include <glm/vec3.hpp>
 #include <vector>
 #include <iostream>
-#include "HittableObjects.h"
 // RayTracing structures...
 struct Ray{
     glm::vec3 origin;
