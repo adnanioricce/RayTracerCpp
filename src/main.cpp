@@ -33,8 +33,9 @@ void setPixel(EasyBMP::Image& img,glm::vec2 pos,glm::vec3 color){
 int main(){
   // Image
 
-  EasyBMP::RGBColor black(64,88,127);
-  EasyBMP::Image img(image_width,image_height,"output.bmp",black);
+    EasyBMP::RGBColor black(64,88,127);
+    EasyBMP::Image img(image_width,image_height,"output.bmp",black);
+    std::cout << "image width:" << image_width << ", height:" << image_height << std::endl;
     // Camera
     auto viewport_height = 2.0;
     auto viewport_width = aspect_ratio * viewport_height;
@@ -50,8 +51,8 @@ int main(){
                              - (vertical / 2.0f) - glm::vec3(0,0, focal_length);
   // World
   std::vector<HittableSphere> spheres = {
-    HittableSphere(glm::vec3(origin.x,origin.y,-1),0.5f),
-    //HittableSphere(glm::vec3(image_width / 2.0f,(image_height / 2.0f) - .15f,1.0f),100)
+      HittableSphere(glm::vec3(origin.x,origin.y,-1),0.5f),
+      HittableSphere(glm::vec3(origin.x,origin.y + 100.0f,-1.0f),100.0f)
   };
 
 

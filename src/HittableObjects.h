@@ -106,8 +106,8 @@ glm::vec3 defaultOnHit(const HitRecord rec,const glm::vec3 center){
     //n -= at(r,rec.t);
     //auto c = 0.5f * color((1.0f + n.x) * 255.0f,(1.0f + n.y) * 255.f,(1.0f + n.z) * 255.0f);
     //auto c = (255.0f * n) * 0.5f;
-    //auto correction = 0.4f;
-    auto correction = glm::sin(n);
+    auto correction = 0.4f;
+    //auto correction = glm::clamp(glm::length(rec.position),0.2f,0.4f);
     auto c = (n - center) * correction * 255.0f;
     LogRayColorHit(n,c);
     //return n * -255.0f;
